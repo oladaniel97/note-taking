@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <style>
+        ul li a{
+            text-decoration:none;
+            color :black;
+            font-size:1rem;
+        }
+        ul li{
+            margin-bottom:5px;
+        }
+    </style>
+</head>
+<body style="margin-left:10%;margin-right:10%">
+    <div class='container d-flex justify-content-between p-2 'style="background-color:#975023">
+        <div>
+            <a href='{% url 'note:editor' %}' class="text-decoration-none text-black">Notes</a>
+        </div>
+        <div>
+            <a href='{% url 'note:editor' %}?docid=0' class="text-decoration-none text-black">New document</a>
+        </div>
+    </div>
+   
+{% comment %} left side {% endcomment %}
+    <div class="row mt-3">
+        <div class="col-sm-4">
+            <P>Documents</p>
+            <ul class='list-unstyled '>
+                {% for doc in notes %}
+                    <li >
+                        <a href='{% url 'note:editor' %}?docid={{ doc.id }}' >{{ doc.title|capfirst }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            
+        </div>
+    {% comment %} right side {% endcomment %}
+        <div class="col-sm-8">
+            <form method='POST' action='{% url 'note:editor' %}'>
+                {% csrf_token %}
+                <input type='hidden' name='docid' value='{{ docid }}'>
+                <div class="mb-3">
+                  <label for="" class="form-label">Title 
+                    {% if note %}
+                    <p><em>Created at: {{ note.created_at}}   /  Modified at: {{ note.modified_at|timesince}} ago</em></p>
+                    {% endif %}
+                  </label>
+                  <input type="text"
+                    class="form-control" name="title" id=""  placeholder="Title" {% if note %} value='{{ note.title }}'{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Content</label>
+                    <textarea 
+                      class="form-control" name="content" id=""  placeholder="Content"> {% if note %}{{ note.content }}{% endif %}</textarea>
+                  </div>
+                  <button>Save</button>
+                  {% if note %}
+                    <button><a href='{% url 'note:delete' note.id %}'>Delete</a></button>
+                    {% endif %}
+            </form>
+        </div>
+    </div>
+    
+</body>
+</html>
